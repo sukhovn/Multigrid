@@ -1,0 +1,6 @@
+#Source files and final code
+
+obj/
+gauss_seidel
+result*/
+*.pyc
