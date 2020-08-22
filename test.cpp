@@ -50,6 +50,12 @@ void test(int argc, char const *argv[]){
 	
 	gs.fill_lhs(test_function);
 	gs.fill_rhs(test_function_laplacian);
+	
+	double error;
+	for(int i = 0; i < steps; i++){
+		error = gs.gs_step(1.0);
+		std::cout << "Step " << i << ", " << "error " << error << "\n";
+	}
 
 	std::cout << "The difference between the calculated and the exact result is: ";
 	std::cout << std::scientific << gs.compare_lhs(test_function) << "\n";
