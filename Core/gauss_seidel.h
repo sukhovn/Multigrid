@@ -36,8 +36,9 @@ class Gauss_Seidel{
 		int print_index(int i); //Technical function that decomposes index i to dimensions
 		//Gauss-Seidel step, works only if number of points is equal in all dimensions
 		double gs_step(double omega);
-
-		double sor(int steps);
+		
+		int gauss_seidel(void);
+		int sor(void);
 };
 
 #endif

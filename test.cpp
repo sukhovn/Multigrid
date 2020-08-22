@@ -4,6 +4,7 @@
 #include <cmath>
 #include <gauss_seidel.h>
 #include <string.h>
+#include <time.h>
 
 double test_function(std::vector<double> &x){
 	double val = 1.0;
@@ -33,10 +34,10 @@ void test(int argc, char const *argv[]){
 			nx = atoi(argv[i+1]);
 			i++;
 		}
-		if(strcmp(argv[i], "-steps") == 0){
-			steps = atoi(argv[i+1]);
-			i++;
-		}
+		// if(strcmp(argv[i], "-steps") == 0){
+		// 	steps = atoi(argv[i+1]);
+		// 	i++;
+		// }
 		if(strcmp(argv[i], "-out") == 0){
 			strcpy(folder_name, argv[i+1]);
 			ifsave = true;
@@ -51,12 +52,14 @@ void test(int argc, char const *argv[]){
 	gs.fill_lhs(test_function);
 	gs.fill_rhs(test_function_laplacian);
 	
-	double error;
-	for(int i = 0; i < steps; i++){
-		error = gs.gs_step(1.0);
-		std::cout << "Step " << i << ", " << "error " << error << "\n";
-	}
-
+	clock_t t; 
+    t = clock(); 
+	steps = gs.sor();
+	t = clock() - t;
+	double duration = ((double) t)/CLOCKS_PER_SEC;
+	
+	std::cout << "The number of steps is " << steps << "\n";
+	std::cout << "The calculation took " << duration << " seconds\n";
 	std::cout << "The difference between the calculated and the exact result is: ";
 	std::cout << std::scientific << gs.compare_lhs(test_function) << "\n";
 
