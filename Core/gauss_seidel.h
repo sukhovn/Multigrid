@@ -33,10 +33,10 @@ class Gauss_Seidel{
 
 		double compare_lhs(double (*lhs_func)(std::vector<double> &));
 
-		int print_index(int i); //Technical function that decomposes index i to dimensions
+		void print_index(int i); //Technical function that decomposes index i to dimensions
 		//Gauss-Seidel step, works only if number of points is equal in all dimensions
 		double gs_step(double omega);
-		
+
 		int gauss_seidel(void);
 		int sor(void);
 };

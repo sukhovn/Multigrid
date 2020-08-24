@@ -5,7 +5,8 @@
 
 #define MAX_STEP 10000
 #define ERROR_THRS 1.0e-12
-int Gauss_Seidel::print_index(int i){
+
+void Gauss_Seidel::print_index(int i){
 	int urem = usize, ii = i;
 	for(int dm = 0; dm < ndim; dm++){
 		urem /= nn[dm]+1;
@@ -13,6 +14,7 @@ int Gauss_Seidel::print_index(int i){
 		ii = ii%urem;
 	}
 	std::cout << "   " << i << "\n";
+	return;
 }
 
 double Gauss_Seidel::gs_step(double omega){
