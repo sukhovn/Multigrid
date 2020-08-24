@@ -3,13 +3,13 @@
 #include <fstream>
 #include <cmath>
 #include <string.h>
-#include <gauss_seidel.h>
+#include <multigrid.h>
 
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <unistd.h>
 
-void Gauss_Seidel::save_to_file(const char *folder_name){
+void Multigrid::save_to_file(const char *folder_name){
 	//Creating output folder
 	struct stat sttus = {0};
 	if (stat(folder_name, &sttus) == -1) {

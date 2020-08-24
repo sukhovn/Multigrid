@@ -2,7 +2,7 @@
 #include <vector>
 #include <fstream>
 #include <cmath>
-#include <gauss_seidel.h>
+#include <multigrid.h>
 #include <string.h>
 #include <time.h>
 
@@ -34,10 +34,6 @@ void test(int argc, char const *argv[]){
 			nx = atoi(argv[i+1]);
 			i++;
 		}
-		// if(strcmp(argv[i], "-steps") == 0){
-		// 	steps = atoi(argv[i+1]);
-		// 	i++;
-		// }
 		if(strcmp(argv[i], "-out") == 0){
 			strcpy(folder_name, argv[i+1]);
 			ifsave = true;
@@ -47,14 +43,14 @@ void test(int argc, char const *argv[]){
 	std::vector<int> nn;
 	nn.assign(ndim, nx);
 
-	Gauss_Seidel gs(nn);
+	Multigrid gs(nn);
 	
-	gs.fill_lhs(test_function);
+	// gs.fill_lhs(test_function);
 	gs.fill_rhs(test_function_laplacian);
 	
 	clock_t t; 
     t = clock(); 
-	steps = gs.sor();
+	steps = gs.gauss_seidel();
 	t = clock() - t;
 	double duration = ((double) t)/CLOCKS_PER_SEC;
 	

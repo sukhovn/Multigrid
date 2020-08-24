@@ -6,7 +6,7 @@
 #ifndef GAUSS_SEIDEL_H
 #define GAUSS_SEIDEL_H
 
-class Gauss_Seidel{
+class Multigrid{
 	private:
 		int ndim;
 		std::vector<int> nn;
@@ -16,7 +16,7 @@ class Gauss_Seidel{
 		std::vector<double> u;
 		std::vector<double> f;
 	public:
-		Gauss_Seidel(std::vector<int> &nni) : nn(nni), ndim(nni.size()), usize(1){
+		Multigrid(std::vector<int> &nni) : nn(nni), ndim(nni.size()), usize(1){
 			dx2 = std::pow(1.0/(1.0*nn[0]), 2.0);
 			for(int i = 0; i < ndim; i++) usize *= nn[i]+1;
 
@@ -28,8 +28,9 @@ class Gauss_Seidel{
 		void save_to_file(const char *folder_name);
 
 		//Defined in function_fill.cpp
-		void fill_lhs(double (*lhs_func)(std::vector<double> &));
-		void fill_rhs(double (*rhs_func)(std::vector<double> &));
+		void fill(std::vector<double> &array, double (*func)(std::vector<double> &));
+		void fill_lhs(double (*lhs_func)(std::vector<double> &)){fill(u, lhs_func);}
+		void fill_rhs(double (*rhs_func)(std::vector<double> &)){fill(f, rhs_func);}
 
 		double compare_lhs(double (*lhs_func)(std::vector<double> &));
 
@@ -38,7 +39,6 @@ class Gauss_Seidel{
 		double gs_step(double omega);
 
 		int gauss_seidel(void);
-		int sor(void);
 };
 
 #endif

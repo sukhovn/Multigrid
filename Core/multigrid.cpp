@@ -1,12 +1,12 @@
 #include <iostream>
 #include <vector>
 #include <cmath>
-#include <gauss_seidel.h>
+#include <multigrid.h>
 
 #define MAX_STEP 10000
 #define ERROR_THRS 1.0e-12
 
-void Gauss_Seidel::print_index(int i){
+void Multigrid::print_index(int i){
 	int urem = usize, ii = i;
 	for(int dm = 0; dm < ndim; dm++){
 		urem /= nn[dm]+1;
@@ -17,7 +17,7 @@ void Gauss_Seidel::print_index(int i){
 	return;
 }
 
-double Gauss_Seidel::gs_step(double omega){
+double Multigrid::gs_step(double omega){
 	double diff, max = 0.0;
 	int ii, urem, ishift = 1;
 	int ist = 0, iend;
@@ -54,24 +54,11 @@ double Gauss_Seidel::gs_step(double omega){
 	return max;
 }
 
-int Gauss_Seidel::gauss_seidel(void){
+int Multigrid::gauss_seidel(void){
 	int i = 0;
 	double error;
 	while(i < MAX_STEP){
 		error = gs_step(1.0);
-		i++;
-		if(error < ERROR_THRS) break;
-	}
-
-	return i;
-}
-
-int Gauss_Seidel::sor(void){
-	int i = 0;
-	double error;
-	double omega = 2.0/(1.0 + M_PI/(1.0*nn[0]));
-	while(i < MAX_STEP){
-		error = gs_step(omega);
 		i++;
 		if(error < ERROR_THRS) break;
 	}

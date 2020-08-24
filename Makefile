@@ -1,6 +1,6 @@
 .PHONY: all clean
 
-PROGRAM = gauss_seidel
+PROGRAM = multigrid
 MAIN = test
 CORE_DIR = Core
 
