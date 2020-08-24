@@ -40,10 +40,8 @@ void test(int argc, char const *argv[]){
 			i++;
 		}	
 	}
-	std::vector<int> nn;
-	nn.assign(ndim, nx);
 
-	Multigrid gs(nn);
+	Multigrid gs(ndim, nx);
 	
 	// gs.fill_lhs(test_function);
 	gs.fill_rhs(test_function_laplacian);

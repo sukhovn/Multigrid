@@ -9,17 +9,17 @@
 class Multigrid{
 	private:
 		int ndim;
-		std::vector<int> nn;
-		double dx2;
+		int nn;
+		int ng;
 
 		int usize;
 		std::vector<double> u;
 		std::vector<double> f;
 	public:
-		Multigrid(std::vector<int> &nni) : nn(nni), ndim(nni.size()), usize(1){
-			dx2 = std::pow(1.0/(1.0*nn[0]), 2.0);
-			for(int i = 0; i < ndim; i++) usize *= nn[i]+1;
-
+		Multigrid(int ndimi, int nni) : nn(nni), ndim(ndimi), usize(1), ng(0){
+			while(nni >>= 1) ng++;
+			if(nn != (1 << ng)) throw("nn must be a power of 2 in multigrid\n");
+			for(int i = 0; i < ndim; i++) usize *= nn+1;
 			u.assign(usize, 0.0);
 			f.assign(usize, 0.0);
 		}
@@ -36,7 +36,7 @@ class Multigrid{
 
 		void print_index(int i); //Technical function that decomposes index i to dimensions
 		//Gauss-Seidel step, works only if number of points is equal in all dimensions
-		double gs_step(double omega);
+		double gs_step(std::vector<double> &arr, std::vector<double> &rhs);
 
 		int gauss_seidel(void);
 };

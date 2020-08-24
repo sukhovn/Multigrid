@@ -10,12 +10,12 @@ void Multigrid::fill(std::vector<double> &array, double (*func)(std::vector<doub
 
 	for(i = ii = 0; i < usize; ii = ++i){
 		for(int dm = ndim-1; dm >= 0; dm--){
-			if(ii%(nn[dm]+1)){
-				x[dm] += 1.0/(1.0*nn[dm]);
+			if(ii%(nn+1)){
+				x[dm] += 1.0/(1.0*nn);
 				break;
 			}
 			x[dm] = 0.0;
-			ii /= (nn[dm]+1);
+			ii /= (nn+1);
 		}
 		array[i] = (*func)(x);
 	}
@@ -30,12 +30,12 @@ double Multigrid::compare_lhs(double (*lhs_func)(std::vector<double> &)){
 
 	for(i = ii = 0; i < usize; ii = ++i){
 		for(int dm = ndim-1; dm >= 0; dm--){
-			if(ii%(nn[dm]+1)){
-				x[dm] += 1.0/(1.0*nn[dm]);
+			if(ii%(nn+1)){
+				x[dm] += 1.0/(1.0*nn);
 				break;
 			}
 			x[dm] = 0.0;
-			ii /= (nn[dm]+1);
+			ii /= (nn+1);
 		}
 		diff = fabs(u[i] - (*lhs_func)(x));
 		if(max < diff) max = diff;
