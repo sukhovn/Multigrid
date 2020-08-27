@@ -34,11 +34,16 @@ class Multigrid{
 
 		double compare_lhs(double (*lhs_func)(std::vector<double> &));
 
-		void print_index(int i); //Technical function that decomposes index i to dimensions
+		void print_index(int n, int i); //Technical function that decomposes index i to dimensions
 		//Gauss-Seidel step, works only if number of points is equal in all dimensions
 		double gs_step(std::vector<double> &arr, std::vector<double> &rhs);
 
 		int gauss_seidel(void);
+		
+		//Pure multigrid routines
+		void slvsml(std::vector<double> &arr, std::vector<double> &rhs);
+		void addint(std::vector<double> &uf, std::vector<double> &uc);
+		void rstrct(std::vector<double> &uc, std::vector<double> &uf);
 };
 
 #endif
