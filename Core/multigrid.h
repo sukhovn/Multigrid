@@ -7,7 +7,7 @@
 #define GAUSS_SEIDEL_H
 
 class Multigrid{
-	public:
+	private:
 		int ndim;
 		int nn;
 		int ng;

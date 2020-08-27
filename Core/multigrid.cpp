@@ -335,3 +335,21 @@ double Multigrid::gs_rstrct_full(std::vector<double> &uc, std::vector<double> &u
 
 	return max;
 }
+
+void Multigrid::slvsml(std::vector<double> &arr, std::vector<double> &rhs){
+	int i = 0, ishift = 1;
+	for(int dm = ndim-1; dm >= 0; dm--){
+		i += ishift;
+		ishift *= 3;
+	}
+	double diff = - 0.25 * rhs[i];
+	
+	ishift = 1;
+	for(int dm = ndim-1; dm >= 0; dm--){
+		diff += arr[i+ishift] + arr[i-ishift];
+		ishift *= 3;
+	}
+			
+	arr[i] = diff/(2.0*ndim);
+	return;
+}

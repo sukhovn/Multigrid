@@ -62,7 +62,43 @@ void test(int argc, char const *argv[]){
 	return;
 }
 
+void test_slvsml(int argc, char const *argv[]){
+	int ndim = 2;
+	
+	for(int i = 1; i < argc; i++){
+		if(strcmp(argv[i], "-ndim") == 0){
+			ndim = atoi(argv[i+1]);
+			i++;
+		}
+	}
+
+	int size = pow(3, ndim);
+	std::vector<double> u, rhs;
+	u.assign(size, 0.0);
+	rhs.assign(size, 0.0);
+
+	int i = 0, ishift = 1;
+	for(int dm = ndim-1; dm >= 0; dm--){
+		i += ishift;
+		ishift *= 3;
+	}
+	rhs[i] = 1.0;
+
+	Multigrid gs(ndim, 16);
+
+	gs.slvsml(u, rhs);
+	for(i = 0; i < size; i++){
+		gs.print_index(2, i);
+		std::cout << u[i] << "\n\n";
+	}
+
+	std::cout << gs.gs_step(u, rhs) << "\n";
+
+	return;
+}
+
 int main(int argc, char const *argv[]){
-	test(argc, argv);
+	// test(argc, argv);
+	test_slvsml(argc, argv);
 	return 0;
 }
