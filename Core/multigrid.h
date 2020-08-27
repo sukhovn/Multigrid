@@ -7,7 +7,7 @@
 #define GAUSS_SEIDEL_H
 
 class Multigrid{
-	private:
+	public:
 		int ndim;
 		int nn;
 		int ng;
@@ -43,7 +43,9 @@ class Multigrid{
 		//Pure multigrid routines
 		void slvsml(std::vector<double> &arr, std::vector<double> &rhs);
 		void addint(std::vector<double> &uf, std::vector<double> &uc);
-		void rstrct(std::vector<double> &uc, std::vector<double> &uf);
+		void rstrct_half(std::vector<double> &uc, std::vector<double> &uf);
+		void rstrct_full(std::vector<double> &uc, std::vector<double> &uf);
+		double gs_rstrct_full(std::vector<double> &uc, std::vector<double> &uf, std::vector<double> &rhs);
 };
 
 #endif

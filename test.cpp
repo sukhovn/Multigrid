@@ -78,7 +78,7 @@ inline int ipow(int input, int n){
 
 void test_rstrct(int argc, char const *argv[]){
 	int ndim = 2, nx = 32, steps = 100;
-	int nxc = 4, jf = 12;
+	int nxc = 4, jc = 12;
 	
 	bool ifsave = false;
 	char folder_name[80];
@@ -97,7 +97,7 @@ void test_rstrct(int argc, char const *argv[]){
 			i++;
 		}
 		if(strcmp(argv[i], "-j") == 0){
-			jf = atoi(argv[i+1]);
+			jc = atoi(argv[i+1]);
 			i++;
 		}
 	}
@@ -106,23 +106,55 @@ void test_rstrct(int argc, char const *argv[]){
 	std::vector<double> uc, uf;
 	uc.assign(ipow(nxc+1, ndim), 0.0);
 	uf.assign(ipow(2*nxc+1, ndim), 0.0);
-	uf[jf] = 1.0;
+	uc[jc] = 1.0;
 
-	// gs.rstrct(uc, uf);
-	// gs.print_index(2*nxc, jf);
-	// for(int i = 0; i < uc.size(); i++){
-	// 	if(uc[i] != 0.0){
-	// 		gs.print_index(nxc, i);
-	// 		std::cout << uc[i] << "\n";
-	// 	}
-	// }
 	gs.addint(uf, uc);
+	gs.print_index(nxc, jc);
+	for(int i = 0; i < uf.size(); i++){
+		if(uf[i] != 0.0){
+			gs.print_index(nxc*2, i);
+			std::cout << uf[i] << "\n";
+		}
+	}
+
+	// clock_t t; 
+ // 	double duration;
+
+ //    t = clock();
+ //    for(int i = 0; i < 1000; i++) 
+	// 	gs.addint(uf, uc);
+	// t = clock() - t;
+	// duration = ((double) t)/CLOCKS_PER_SEC;
+	// std::cout << "The calculation 1 took " << duration << " seconds\n";
+
+ //    t = clock();
+ //    for(int i = 0; i < 1000; i++) 
+	// 	gs.rstrct_half(uc, uf);
+	// t = clock() - t;
+	// duration = ((double) t)/CLOCKS_PER_SEC;
+	// std::cout << "The calculation 1 took " << duration << " seconds\n";
+
+	// t = clock();
+ //    for(int i = 0; i < 1000; i++) 
+	// 	gs.gs_rstrct_full(uc, uf, gs.u);
+	// t = clock() - t;
+	// duration = ((double) t)/CLOCKS_PER_SEC;
+	// std::cout << "The calculation 2 took " << duration << " seconds\n";
+
+	// t = clock();
+ //    for(int i = 0; i < 1000; i++) 
+	// 	gs.gs_step(uf, gs.u);
+	// t = clock() - t;
+	// duration = ((double) t)/CLOCKS_PER_SEC;
+	// std::cout << "The calculation 3 took " << duration << " seconds\n";
+
+	// gs.gs_rstrct(uc, uf);
 
 	return;
 }
 
 int main(int argc, char const *argv[]){
-	// test(argc, argv);
-	test_rstrct(argc, argv);
+	test(argc, argv);
+	// test_rstrct(argc, argv);
 	return 0;
 }
