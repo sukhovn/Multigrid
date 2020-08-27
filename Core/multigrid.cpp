@@ -69,11 +69,8 @@ double Multigrid::gs_step(std::vector<double> &arr, std::vector<double> &rhs){
 int Multigrid::gauss_seidel(void){
 	int i = 0;
 	double error;
-	std::vector<double> a;
-	a.assign(ipow(nn+1, ndim), 0.0);
 	while(i < MAX_STEP){
 		error = gs_step(u, f);
-		// error = gs_rstrct_full(a, u, f);
 		i++;
 		if(error < ERROR_THRS) break;
 	}
@@ -105,8 +102,8 @@ void Multigrid::addint(std::vector<double> &uf, std::vector<double> &uc){
 			ii = i;	j = 0; ishift = 1; coef = 1;
 			for(int dm = 0; dm < ndim; dm++){
 				itmp = ii%fn;
-				if(parity[dm] = itmp%2) coef *= 2;
-				itmp /= 2;
+				if(parity[dm] = itmp%2) coef <<= 1;
+				itmp >>= 1;
 				j += ishift*itmp;
 				ishift *= cn;
 				ii /= fn;
@@ -122,7 +119,7 @@ void Multigrid::addint(std::vector<double> &uf, std::vector<double> &uc){
 					if(parity[dm]){
 						if(ii%2) j-= ishift;
 						else{j += ishift; break;}
-						ii /= 2;
+						ii >>= 1;
 					}
 					ishift *= cn;
 				}
@@ -214,12 +211,12 @@ void Multigrid::rstrct_full(std::vector<double> &uc, std::vector<double> &uf){
 			for(int dm = 0; dm < ndim; dm++){
 				itmp = ii%fn;
 				parity[dm] = itmp%2;
-				itmp /= 2;
+				itmp >>= 1;
 				if(parity[dm]){
 					coef *= 2.0;
 					if(itmp == 0){parity[dm] = 0; j += ishift;}
 					else if(itmp == cn-2) parity[dm] = 0;
-					else jiter *= 2;
+					else jiter <<= 1;
 				}
 				j += ishift*itmp;
 				ishift *= cn;
@@ -227,7 +224,7 @@ void Multigrid::rstrct_full(std::vector<double> &uc, std::vector<double> &uf){
 			}
 			
 			for(int k = 0; k < jiter; k++){
-				//j runs through even neighboring points on a course grid
+				//j runs through even neighboring points on a coarse grid
 				//main computational body
 				uc[j] += uf[i]/(factor*coef);
 
@@ -236,7 +233,7 @@ void Multigrid::rstrct_full(std::vector<double> &uc, std::vector<double> &uf){
 					if(parity[dm]){
 						if(ii%2) j-= ishift;
 						else{j += ishift; break;}
-						ii /= 2;
+						ii >>= 1;
 					}
 					ishift *= cn;
 				}
@@ -297,12 +294,12 @@ double Multigrid::gs_rstrct_full(std::vector<double> &uc, std::vector<double> &u
 			for(int dm = 0; dm < ndim; dm++){
 				itmp = ii%fn;
 				parity[dm] = itmp%2;
-				itmp /= 2;
+				itmp >>= 1;
 				if(parity[dm]){
 					coef *= 2.0;
 					if(itmp == 0){parity[dm] = 0; j += ishift;}
 					else if(itmp == cn-2) parity[dm] = 0;
-					else jiter *= 2;
+					else jiter <<= 1;
 				}
 				j += ishift*itmp;
 				ishift *= cn;
@@ -310,7 +307,7 @@ double Multigrid::gs_rstrct_full(std::vector<double> &uc, std::vector<double> &u
 			}
 			
 			for(int k = 0; k < jiter; k++){
-				//j runs through even neighboring points on a course grid
+				//j runs through even neighboring points on a coarse grid
 				//main computational body
 				uc[j] += diff/(factor*coef*dx2);
 
@@ -319,7 +316,7 @@ double Multigrid::gs_rstrct_full(std::vector<double> &uc, std::vector<double> &u
 					if(parity[dm]){
 						if(ii%2) j-= ishift;
 						else{j += ishift; break;}
-						ii /= 2;
+						ii >>= 1;
 					}
 					ishift *= cn;
 				}
