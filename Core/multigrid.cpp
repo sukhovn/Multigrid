@@ -6,14 +6,6 @@
 #define MAX_STEP 10000
 #define ERROR_THRS 1.0e-12
 
-inline int ipow(int input, int n){
-	return std::round(std::pow(input, n));
-}
-
-inline int iroot(int input, int n){
-	return std::round(std::pow(input, 1./n));
-}
-
 void Multigrid::print_index(int n, int i){
 	int urem = ipow(n+1, ndim);
 	int ii = i;
@@ -66,18 +58,6 @@ double Multigrid::gs_step(std::vector<double> &arr, std::vector<double> &rhs){
 	return max;
 }
 
-int Multigrid::gauss_seidel(void){
-	int i = 0;
-	double error;
-	while(i < MAX_STEP){
-		error = gs_step(u, f);
-		i++;
-		if(error < ERROR_THRS) break;
-	}
-
-	return i;
-}
-
 //Performes prolongation (linear interpolation) of uc and adds it to uf
 void Multigrid::addint(std::vector<double> &uf, std::vector<double> &uc){
 	int fsize = uf.size();
@@ -102,7 +82,7 @@ void Multigrid::addint(std::vector<double> &uf, std::vector<double> &uc){
 			ii = i;	j = 0; ishift = 1; coef = 1;
 			for(int dm = 0; dm < ndim; dm++){
 				itmp = ii%fn;
-				if(parity[dm] = itmp%2) coef <<= 1;
+				if((parity[dm] = itmp%2)) coef <<= 1;
 				itmp >>= 1;
 				j += ishift*itmp;
 				ishift *= cn;
@@ -253,9 +233,9 @@ void Multigrid::rstrct_full(std::vector<double> &uc, std::vector<double> &uf){
 	return;
 }
 
-//The routine performs a Gauss-Seidel step together with a restriction of the residual
+//The routine finds residual and performs a restriction of it
 //Full-weight restriction, uc boundary not affected
-double Multigrid::gs_rstrct_full(std::vector<double> &uc, std::vector<double> &uf, std::vector<double> &rhs){
+double Multigrid::res_rstrct_full(std::vector<double> &uc, std::vector<double> &uf, std::vector<double> &rhs){
 	int fsize = uf.size();
 	int fn = iroot(fsize, ndim);
 	int cn = fn/2+1;
@@ -287,8 +267,7 @@ double Multigrid::gs_rstrct_full(std::vector<double> &uc, std::vector<double> &u
 			}
 			diff -= dx2 * rhs[i];
 			if(max < fabs(diff)) max = fabs(diff);
-			uf[i] += diff/(2.0*ndim);
-			
+
 			//Restriction part of the routine
 			ii = i;	j = 0; ishift = 1; coef = 1.0; jiter = 1;
 			for(int dm = 0; dm < ndim; dm++){
@@ -309,8 +288,7 @@ double Multigrid::gs_rstrct_full(std::vector<double> &uc, std::vector<double> &u
 			for(int k = 0; k < jiter; k++){
 				//j runs through even neighboring points on a coarse grid
 				//main computational body
-				uc[j] += diff/(factor*coef*dx2);
-
+				uc[j] += (-1.0)*diff/(factor*coef*dx2);
 				ii = k; ishift = 1;
 				for(int dm = 0; dm < ndim; dm++){
 					if(parity[dm]){
@@ -352,4 +330,48 @@ void Multigrid::slvsml(std::vector<double> &arr, std::vector<double> &rhs){
 			
 	arr[i] = diff/(2.0*ndim);
 	return;
+}
+
+double Multigrid::multigrid_iteration(int j, std::vector<double> &uj, std::vector<double> &rhsj){
+	double err;
+	if(j == 0){
+		slvsml(uj, rhsj);
+	}
+	else{
+		int len = (1 << j) + 1;
+		int size = ipow(len, ndim);
+		std::vector<double> v, res;
+		v.assign(size, 0.0);
+		res.assign(size, 0.0);
+
+		for(int i = 0; i < npre; i++)
+			gs_step(uj, rhsj);
+		res_rstrct_full(res, uj, rhsj);
+		multigrid_iteration(j-1, v, res);
+		addint(uj, v);
+		for(int i = 0; i < npost; i++)
+			err = gs_step(uj, rhsj);	
+	}
+	return err;
+}
+
+double Multigrid::full_multigrid(int ncycle){
+	double err;
+	int n = 3;
+	int size = ipow(n, ndim);
+	std::vector<double> ui, ui1;
+	ui.assign(size, 0.0);
+	slvsml(ui, rhs[0]);
+
+	for(int i = 1; i < ng; i++){
+		n = 2*n-1;
+		size = ipow(n, ndim);
+		ui1 = ui;
+		ui.assign(size, 0.0);
+		addint(ui, ui1);
+		for(int j = 0; j < ncycle; j++)
+			err = multigrid_iteration(i, ui, rhs[i]);
+	}
+	u = ui;
+	return err;
 }

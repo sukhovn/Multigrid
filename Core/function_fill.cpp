@@ -42,3 +42,16 @@ double Multigrid::compare_lhs(double (*lhs_func)(std::vector<double> &)){
 	}
 	return max;
 }
+
+
+void Multigrid::fill_rhs(double (*rhs_func)(std::vector<double> &)){
+	rhs.resize(ng);
+	int n = nn;
+	rhs[ng-1].assign(ipow(n+1, ndim), 0.0);
+	fill(rhs[ng-1], rhs_func);
+	for(int i = ng-2; i >= 0; i--){
+		n >>= 1;
+		rhs[i].assign(ipow(n+1, ndim), 0.0);
+		rstrct_full(rhs[i], rhs[i+1]);
+	}
+}
